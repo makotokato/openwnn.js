@@ -6,12 +6,6 @@
 #define NJ_APPROXSTORE_SIZE                         (NJ_MAX_CHARSET_FROM_LEN + NJ_TERM_LEN + NJ_MAX_CHARSET_TO_LEN + NJ_TERM_LEN)
 
 
-#define APPROX_PATTERN_EN_TOUPPER 0L
-#define APPROX_PATTERN_EN_TOLOWER 1L
-#define APPROX_PATTERN_EN_QWERTY_NEAR 2L
-#define APPROX_PATTERN_EN_QWERTY_NEAR_UPPER 3L
-#define APPROX_PATTERN_JAJP_12KEY_NORMAL 4L
-
 #define jp_co_omronsoft_openwnn_OpenWnnDictionaryImplJni_POS_TYPE_V1 0L
 #define jp_co_omronsoft_openwnn_OpenWnnDictionaryImplJni_POS_TYPE_V2 1L
 #undef jp_co_omronsoft_openwnn_OpenWnnDictionaryImplJni_POS_TYPE_V3

@@ -47,6 +47,8 @@ static uint8_t         gHasResult = FALSE;
 static uint8_t         gHasCursor = FALSE;
 static NJ_CHAR         gResultBuffer[NJ_MAX_RESULT_LEN + NJ_TERM_LEN];
 
+// dictionary data
+// XXX we should use sepalated file?
 extern NJ_UINT8*       con_data[];
 extern NJ_UINT8*       dic_data[];
 extern NJ_UINT32       dic_size[];
@@ -61,6 +63,14 @@ enum OpenWnnOperation {
 enum OpenWnnOrder {
   ORDER_BY_FREQUENCY = 0,
   ORDER_BY_KEY = 1
+};
+
+enum ApproxPattern {
+  APPROX_PATTERN_EN_TOUPPER = 0,
+  APPROX_PATTERN_EN_TOLOWER = 1,
+  APPROX_PATTERN_EN_QWERTY_NEAR = 2,
+  APPROX_PATTERN_EN_QWERTY_NEAR_UPPER = 3,
+  APPROX_PATTERN_JAJP_12KEY_NORMAL = 4
 };
 
 static NJ_CHAR
@@ -182,7 +192,6 @@ SearchWord(enum OpenWnnOperation aOperation, enum OpenWnnOrder aOrder,
   memcpy(&gWnnClass.dic_set, &gDicSet, sizeof(NJ_DIC_SET));
   result = njx_search_word(&gWnnClass, &gCursor);
 
-  // If a result is found, enable getNextWord method
   gHasCursor = (result == 1);
   gHasResult = FALSE;
 
@@ -195,7 +204,6 @@ GetNextWord(int aLength)
   int result;
 
   if (!gHasCursor) {
-    // When njx_search_word() was not yet called, return "No result is found"
     return 0;
   }
 
@@ -287,16 +295,8 @@ SetApproxPattern(NJ_CHAR* aSrc, NJ_CHAR* aDst)
 }
 
 void
-SetApproxPatternByPattern(int aApproxPattern)
+SetApproxPatternByPattern(enum ApproxPattern aApproxPattern)
 {
-  if (!(aApproxPattern == APPROX_PATTERN_EN_TOUPPER ||
-        aApproxPattern == APPROX_PATTERN_EN_TOLOWER ||
-        aApproxPattern == APPROX_PATTERN_EN_QWERTY_NEAR ||
-        aApproxPattern == APPROX_PATTERN_EN_QWERTY_NEAR_UPPER ||
-        aApproxPattern == APPROX_PATTERN_JAJP_12KEY_NORMAL)) {
-    return;
-  }
-
   const PREDEF_APPROX_PATTERN* pattern =
     predefinedApproxPatterns[aApproxPattern];
   if (gApproxSet.charset_count + pattern->size <= NJ_MAX_CHARSET) {
