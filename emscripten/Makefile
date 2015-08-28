@@ -25,7 +25,6 @@ all: OpenWnn.js
 
 clean:
 	rm OpenWnn.js
-	rm OpenWnn.js.mem
 
 OpenWnn.js: $(SOURCES)
 	$(EMCC) \
@@ -33,4 +32,4 @@ OpenWnn.js: $(SOURCES)
 		-I$(OPENWNNPATH)/libwnnDictionary/include \
 		-I$(OPENWNNPATH)/libwnnDictionary \
 		-o $@ $(SOURCES) \
-		-s EXPORTED_FUNCTIONS="['_ClearApproxPatterns', '_ClearDictionaryParameters', '_GetCandidate', '_GetNextWord', '_GetStroke', '_InitOpenWnn', '_SearchWord', '_SetDictionaryParameter', '_SetApproxPatternByPattern','_SetDictionaryForPrediction']"
+		-s EXPORTED_FUNCTIONS="['_ClearApproxPatterns', '_ClearDictionaryParameters', '_GetCandidate', '_GetNextWord', '_GetStroke', '_InitOpenWnn', '_SearchWord', '_SetCandidate', '_SetDictionaryParameter', '_SetApproxPatternByPattern','_SetDictionaryForPrediction', '_SetStroke']"

@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "jsapi.h"
+#include "api.h"
 #include "predef_table.h"
 
 #define TRUE 1
@@ -330,15 +330,15 @@ ClearResult()
 }
 
 void
-SetStroke(NJ_CHAR* aStroke)
+SetStroke(const uint16_t* aStroke)
 {
-  nj_strcpy(gPreviousStroke, aStroke);
+  ConvertUTF16LEToNjChar(aStroke, gPreviousStroke);
 }
 
 void
-SetCandidate(NJ_CHAR* aCandidate)
+SetCandidate(const uint16_t* aCandidate)
 {
-  nj_strcpy(gPreviousCandidate, aCandidate);
+  ConvertUTF16LEToNjChar(aCandidate, gPreviousCandidate);
 }
 
 void
