@@ -1,0 +1,3 @@
+[submodule "OpenWnn"]
+	path = OpenWnn
+	url = https://android.googlesource.com/platform/packages/inputmethods/OpenWnn
