@@ -35,7 +35,7 @@ static NJ_UINT8        gDicType[NJ_MAX_DIC];
 static NJ_CHAR         gKeyString[NJ_MAX_LEN + NJ_TERM_LEN];
 static NJ_RESULT       gResult;
 static NJ_CURSOR       gCursor;
-static NJ_SEARCH_CACHE gSrhCache[NJ_MAX_DIC];
+static NJ_SEARCH_CACHE gSearchCache[NJ_MAX_DIC];
 static NJ_DIC_SET      gDicSet;
 static NJ_CLASS        gWnnClass;
 static NJ_CHARSET      gApproxSet;
@@ -148,7 +148,7 @@ SetDictionaryParameter(int aIndex, int aBase, int aHigh)
   } else {
     gDicSet.dic[aIndex].type = gDicType[aIndex];
     gDicSet.dic[aIndex].handle = gDicHandle[aIndex];
-    gDicSet.dic[aIndex].srhCache = &gSrhCache[aIndex];
+    gDicSet.dic[aIndex].srhCache = &gSearchCache[aIndex];
     gDicSet.dic[aIndex].dic_freq[NJ_MODE_TYPE_HENKAN].base = aBase;
     gDicSet.dic[aIndex].dic_freq[NJ_MODE_TYPE_HENKAN].high = aHigh;
   }
@@ -348,6 +348,18 @@ SelectWord()
   njx_select(&gWnnClass, &gResult);
 }
 
+int
+GetLeftPartOfSpeech()
+{
+  return NJ_GET_FPOS_FROM_STEM(&(gResult.word));
+}
+
+int
+GetRightPartOfSpeech()
+{
+  return NJ_GET_BPOS_FROM_STEM(&(gResult.word));
+}
+
 static NJ_CHAR*
 getApproxPattern(NJ_CHAR* aSrc)
 {
@@ -381,4 +393,23 @@ SetDictionaryForPrediction(size_t len)
 
     SetApproxPatternByPattern(APPROX_PATTERN_JAJP_12KEY_NORMAL);
   }
+}
+
+void
+SetDictionaryForAncillaryPattern()
+{
+  ClearDictionaryParameters();
+  ClearApproxPatterns();
+
+  SetDictionaryParameter(6, 400, 500);
+}
+
+void
+SetDictionaryForIndependentWords()
+{
+  ClearDictionaryParameters();
+  ClearApproxPatterns();
+
+  SetDictionaryParameter(4, 0, 10);
+  SetDictionaryParameter(5, 400, 500);
 }
