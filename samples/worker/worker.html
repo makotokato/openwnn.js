@@ -1,0 +1,40 @@
+<html>
+<head>
+<meta charset="UTF-8"/>
+<script>
+function init()
+{
+  var worker = new Worker('worker.js');
+  worker.onmessage = function(e) {
+    switch(e.data.cmd) {
+    case 'candidatelist':
+      for (var i = 0; i < e.data.candidates.length; i++) {
+        document.getElementById('list').innerHTML +=
+          e.data.candidates[i].candidate + "<br>";
+      }
+      break;
+    default:
+      document.getElementById('list').innerHTML = "";
+    }
+  };
+
+  document.getElementById('text1').addEventListener('input', function() {
+    document.getElementById('list').innerHTML = "";
+    worker.postMessage({
+      cmd: 'composing',
+      stroke: document.getElementById('text1').value,
+      count: 10});
+  }, false);
+}
+
+function input()
+{
+}
+</script>
+</head>
+<body onload="init()">
+<input type="text" id="text1"><br>
+<div id="list">
+</div>
+</body>
+</html>
