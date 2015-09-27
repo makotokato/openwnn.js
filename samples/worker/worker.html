@@ -2,16 +2,18 @@
 <head>
 <meta charset="UTF-8"/>
 <script>
+var lists = [];
 function init()
 {
   var worker = new Worker('worker.js');
   worker.onmessage = function(e) {
     switch(e.data.cmd) {
     case 'candidatelist':
-      for (var i = 0; i < e.data.candidates.length; i++) {
+      lists.push(e.data.candidates);
+      e.data.candidates.forEach(function(element) {
         document.getElementById('list').innerHTML +=
-          e.data.candidates[i].candidate + "<br>";
-      }
+          element.candidate + "<br>";
+      });
       break;
     default:
       document.getElementById('list').innerHTML = "";
@@ -23,7 +25,7 @@ function init()
     worker.postMessage({
       cmd: 'composing',
       stroke: document.getElementById('text1').value,
-      count: 10});
+      count: 20});
   }, false);
 }
 

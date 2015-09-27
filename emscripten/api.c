@@ -360,6 +360,44 @@ GetRightPartOfSpeech()
   return NJ_GET_BPOS_FROM_STEM(&(gResult.word));
 }
 
+int
+SetLeftPartOfSpeech(NJ_UINT16 aPartOfSpeech)
+{
+  NJ_UINT16 lcount = 0;
+  NJ_UINT16 rcount = 0;
+
+  if (!gDicSet.rHandle[NJ_MODE_TYPE_HENKAN]) {
+    return -1;
+  }
+
+  njd_r_get_count(gDicSet.rHandle[NJ_MODE_TYPE_HENKAN], &lcount, &rcount);
+  if (aPartOfSpeech < 1 || aPartOfSpeech > lcount) {
+    return -1;
+  }
+
+  NJ_SET_FPOS_TO_STEM(&(gResult.word ), aPartOfSpeech);
+  return 0;
+}
+
+int
+SetRightPartOfSpeech(NJ_UINT16 aPartOfSpeech)
+{
+  NJ_UINT16 lcount = 0;
+  NJ_UINT16 rcount = 0;
+
+  if (!gDicSet.rHandle[NJ_MODE_TYPE_HENKAN]) {
+    return -1;
+  }
+
+  njd_r_get_count(gDicSet.rHandle[NJ_MODE_TYPE_HENKAN], &lcount, &rcount);
+  if (aPartOfSpeech < 1 || aPartOfSpeech > rcount) {
+    return -1;
+  }
+
+  NJ_SET_BPOS_TO_STEM(&(gResult.word ), aPartOfSpeech);
+  return 0;
+}
+
 static NJ_CHAR*
 getApproxPattern(NJ_CHAR* aSrc)
 {
