@@ -16,10 +16,12 @@
 
 #include "nj_lib.h"
 #include "nj_ext.h"
+#include "nj_dic.h"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "api.h"
 #include "predef_table.h"
@@ -450,4 +452,58 @@ SetDictionaryForIndependentWords()
 
   SetDictionaryParameter(4, 0, 10);
   SetDictionaryParameter(5, 400, 500);
+}
+
+NJ_INT16
+GetNumberOfRightPos()
+{
+  NJ_UINT16 right, left;
+
+  if (!gDicSet.rHandle[NJ_MODE_TYPE_HENKAN]) {
+    return 0;
+  }
+
+  njd_r_get_count(gDicSet.rHandle[NJ_MODE_TYPE_HENKAN], &left, &right);
+  return right;
+}
+
+NJ_UINT8*
+GetConnectArray(int aLeftPartOfSpeech)
+{
+  NJ_UINT8* connect;
+  size_t i;
+  NJ_UINT16 right, left;
+  NJ_UINT8* result;
+
+  if (!gDicSet.rHandle[NJ_MODE_TYPE_HENKAN]) {
+    return NULL;
+  }
+
+  njd_r_get_count(gDicSet.rHandle[NJ_MODE_TYPE_HENKAN], &left, &right);
+  if (aLeftPartOfSpeech > left) {
+    return NULL;
+  }
+
+  result = malloc(right + 1);
+  if (!result) {
+    return NULL;
+  }
+
+  if (aLeftPartOfSpeech == 0) {
+    for (i = 0; i < right + 1; i++) {
+      result[i] = 0;
+    }
+  } else {
+    njd_r_get_connect(gDicSet.rHandle[NJ_MODE_TYPE_HENKAN], aLeftPartOfSpeech,
+                      NJ_RULE_TYPE_FTOB, &connect);
+    result[0] = 0;
+    for (i = 0; i < right; i++) {
+      if (connect[i / 8] & (0x80 >> (i % 8))) {
+        result[i + 1] = 1;
+      } else {
+        result[i + 1] = 0;
+      }
+    }
+  }
+  return result;
 }

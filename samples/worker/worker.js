@@ -5,65 +5,6 @@ const CANDIDATE_COUNT_PER_POST = 40;
 
 importScripts('emscripten_openwnn.js')
 
-// Emscripten's OpenWnn binding
-
-var OpenWnn = {
-  SEARCH_EXACT: 0,
-  SEARCH_PREFIX: 1,
-  SEARCH_LINK: 2,
-
-  ORDER_BY_FREQUENCY: 0,
-  ORDER_BY_KEY: 1,
-
-  _getStroke: Module.cwrap('GetStroke', 'number', []),
-  _getCandidate: Module.cwrap('GetCandidate', 'number', []),
-  _searchWord: Module.cwrap('SearchWord', 'number',
-                            ['number', 'number', 'number']),
-  _setCandidate: Module.cwrap('SetCandidate', 'number', ['number']),
-  _setStroke: Module.cwrap('SetStroke', 'number', ['number']),
-
-  initOpenWnn: Module.cwrap('InitOpenWnn', 'number', []),
-  getFrequency: Module.cwrap('GetFrequency', 'number', []),
-  getLeftPartOfSpeech: Module.cwrap('GetLeftPartOfSpeech', 'number', []),
-  getNextWord: Module.cwrap('GetNextWord', 'number', ['number']),
-  getRightPartOfSpeech: Module.cwrap('GetRightPartOfSpeech', 'number', []),
-  selectWord: Module.cwrap('SelectWord', 'number', []),
-  setDictionaryForIndependentWords:
-    Module.cwrap('SetDictionaryForIndependentWords', 'number', []),
-  setDictionaryForPrediction: Module.cwrap('SetDictionaryForPrediction',
-                                           'number', ['number']),
-  setLeftPartOfSpeech: Module.cwrap('SetLeftPartOfSpeech', 'number',
-                                     ['number']),
-  setRightPartOfSpeech: Module.cwrap('SetRightPartOfSpeech', 'number',
-                                     ['number']),
-
-  getStroke: function() {
-    return Module.UTF16ToString(this._getStroke());
-  },
-
-  getCandidate: function() {
-    return Module.UTF16ToString(this._getCandidate());
-  },
-
-  searchWord: function(aMode, aOrder, aSearch) {
-    var ptr = Module._malloc((aSearch.length + 1) * 2);
-    Module.stringToUTF16(aSearch, ptr);
-    return this._searchWord(aMode, aOrder, ptr);
-  },
-
-  setCandidate: function(aCandidate) {
-    var ptr = Module._malloc((aCandidate.length + 1) * 2);
-    Module.stringToUTF16(aCandidate, ptr);
-    this._setCandidate(ptr);
-  },
-
-  setStroke: function(aStroke) {
-    var ptr = Module._malloc((aStroke.length + 1) * 2);
-    Module.stringToUTF16(aStroke, ptr);
-    this._setStroke(ptr);
-  }
-};
-
 // Helpers
 
 function postCandidateListMessage(aStroke, aArray)
@@ -83,6 +24,7 @@ function showCandidateList(aStroke, aCount)
 {
   var candidates = [];
   var allCount = 0;
+  var addedHiraganaOnly = false;
 
   var count = 0;
   while (true) {
@@ -105,6 +47,11 @@ function showCandidateList(aStroke, aCount)
          hasSameData = true;
        }
     });
+
+    if (aStroke.length && result.candidate == aStroke) {
+      addedHiraganaOnly = true;
+    }
+
     if (!hasSameData) {
       candidates.push(result);
     }
@@ -116,6 +63,18 @@ function showCandidateList(aStroke, aCount)
       allCount += candidates.length;
       candidates = [];
     }
+  }
+
+  if (aStroke.length && !addedHiraganaOnly) {
+    candidates.push({
+      stroke: aStroke,
+      candidate: aStroke,
+      frequency: 0,
+      partOfSpeech: {
+        left: 0,
+        right: 0
+      }
+    });
   }
 
   postCandidateListMessage(aStroke, candidates);

@@ -21,15 +21,17 @@ SOURCES +=	\
 	api.c \
 	$(NULL)
 
-all: OpenWnn.js
+all: emscripten_openwnn.js
 
 clean:
-	rm OpenWnn.js
+	rm emscripten_openwnn.js
 
-OpenWnn.js: $(SOURCES)
+emscripten_openwnn.js: $(SOURCES) binding.js
 	$(EMCC) \
-		-O1 \
+		-O3 \
+		--memory-init-file 0 \
+		--post-js binding.js \
 		-I$(OPENWNNPATH)/libwnnDictionary/include \
 		-I$(OPENWNNPATH)/libwnnDictionary \
 		-o $@ $(SOURCES) \
-		-s EXPORTED_FUNCTIONS="['_ClearApproxPatterns', '_ClearDictionaryParameters', '_ClearResult', '_GetCandidate', '_GetFrequency', '_GetNextWord', '_GetLeftPartOfSpeech', '_GetRightPartOfSpeech', '_GetStroke', '_InitOpenWnn', '_SearchWord', '_SelectWord', '_SetCandidate', '_SetDictionaryParameter', '_SetApproxPatternByPattern','_SetDictionaryForAncillaryPattern', '_SetDictionaryForIndependentWords', '_SetDictionaryForPrediction', '_SetLeftPartOfSpeech', '_SetRightPartOfSpeech', '_SetStroke']"
+		-s EXPORTED_FUNCTIONS="['_ClearApproxPatterns', '_ClearDictionaryParameters', '_ClearResult', '_GetCandidate', '_GetFrequency', '_GetNextWord', '_GetLeftPartOfSpeech', '_GetNumberOfRightPos', '_GetRightPartOfSpeech', '_GetStroke', '_InitOpenWnn', '_SearchWord', '_SelectWord', '_SetCandidate', '_SetDictionaryParameter', '_SetApproxPatternByPattern','_SetDictionaryForAncillaryPattern', '_SetDictionaryForIndependentWords', '_SetDictionaryForPrediction', '_SetLeftPartOfSpeech', '_SetRightPartOfSpeech', '_SetStroke']"
